@@ -34,6 +34,11 @@ class PropertyForm extends Component
         }
     }
 
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
     public function save()
     {
         $validated = $this->validate([
