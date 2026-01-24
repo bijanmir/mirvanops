@@ -1,0 +1,50 @@
+*.log
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+/auth.json
+
+# PHP tooling / test cache
+.phpactor.json
+.phpunit.result.cache
+/.phpunit.cache
+
+# IDEs
+/.fleet
+/.idea
+/.vscode
+/.zed
+/.nova
+
+# Dependencies
+/vendor
+/node_modules
+
+# Vite / build output
+/public/build
+/public/hot
+/.vite
+
+# Public storage (symlink)
+ /public/storage
+
+# Laravel runtime
+/storage/*.key
+/storage/pail
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/logs/*
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# Homestead
+Homestead.json
+Homestead.yaml
