@@ -13,24 +13,25 @@ class MaintenanceRequest extends Model
         'unit_id',
         'lease_id',
         'vendor_id',
-        'assigned_by',
+        'assigned_to',
+        'reported_by',
         'title',
         'description',
         'category',
         'priority',
         'status',
-        'submitted_by_name',
-        'submitted_by_email',
-        'submitted_by_phone',
-        'permission_to_enter',
-        'assigned_at',
-        'completed_at',
+        'scheduled_date',
+        'completed_date',
+        'estimated_cost',
+        'actual_cost',
+        'notes',
     ];
 
     protected $casts = [
-        'permission_to_enter' => 'boolean',
-        'assigned_at' => 'datetime',
-        'completed_at' => 'datetime',
+        'scheduled_date' => 'date',
+        'completed_date' => 'date',
+        'estimated_cost' => 'decimal:2',
+        'actual_cost' => 'decimal:2',
     ];
 
     public function company(): BelongsTo
@@ -53,14 +54,19 @@ class MaintenanceRequest extends Model
         return $this->belongsTo(Vendor::class);
     }
 
-    public function assignedBy(): BelongsTo
+    public function assignedTo(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'assigned_by');
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function reportedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reported_by');
     }
 
     public function comments(): HasMany
     {
-        return $this->hasMany(MaintenanceComment::class)->orderBy('created_at', 'asc');
+        return $this->hasMany(MaintenanceComment::class);
     }
 
     public function photos(): HasMany
@@ -78,7 +84,7 @@ class MaintenanceRequest extends Model
         return match($this->priority) {
             'emergency' => 'red',
             'high' => 'orange',
-            'medium' => 'yellow',
+            'medium' => 'amber',
             'low' => 'green',
             default => 'gray',
         };
@@ -89,9 +95,9 @@ class MaintenanceRequest extends Model
         return match($this->status) {
             'new' => 'blue',
             'assigned' => 'purple',
-            'in_progress' => 'yellow',
+            'in_progress' => 'amber',
+            'on_hold' => 'gray',
             'completed' => 'green',
-            'closed' => 'gray',
             'cancelled' => 'red',
             default => 'gray',
         };

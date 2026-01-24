@@ -11,15 +11,20 @@ class Vendor extends Model
     protected $fillable = [
         'company_id',
         'name',
-        'contact_name',
         'email',
         'phone',
         'specialty',
+        'hourly_rate',
+        'address',
+        'city',
+        'state',
+        'zip',
         'notes',
         'is_active',
     ];
 
     protected $casts = [
+        'hourly_rate' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 

@@ -12,10 +12,14 @@ class MaintenanceComment extends Model
         'user_id',
         'body',
         'is_internal',
+        'is_system',
+        'edited_at',
     ];
 
     protected $casts = [
         'is_internal' => 'boolean',
+        'is_system' => 'boolean',
+        'edited_at' => 'datetime',
     ];
 
     public function maintenanceRequest(): BelongsTo
@@ -26,5 +30,20 @@ class MaintenanceComment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isEdited(): bool
+    {
+        return $this->edited_at !== null;
+    }
+
+    public function canEdit(): bool
+    {
+        return $this->user_id === auth()->id() && !$this->is_system;
+    }
+
+    public function canDelete(): bool
+    {
+        return $this->user_id === auth()->id() && !$this->is_system;
     }
 }
