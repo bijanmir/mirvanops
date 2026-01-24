@@ -15,19 +15,32 @@ class Lease extends Model
         'start_date',
         'end_date',
         'rent_amount',
+        'deposit_amount',
         'security_deposit',
         'payment_due_day',
         'lease_type',
         'status',
+        'move_in_date',
+        'move_out_date',
+        'has_pet',
+        'pet_type',
+        'pet_deposit',
+        'pet_rent',
         'notes',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
+        'move_in_date' => 'date',
+        'move_out_date' => 'date',
         'rent_amount' => 'decimal:2',
+        'deposit_amount' => 'decimal:2',
         'security_deposit' => 'decimal:2',
+        'pet_deposit' => 'decimal:2',
+        'pet_rent' => 'decimal:2',
         'payment_due_day' => 'integer',
+        'has_pet' => 'boolean',
     ];
 
     public function company(): BelongsTo
@@ -48,6 +61,11 @@ class Lease extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function getTotalMonthlyRentAttribute(): float
+    {
+        return $this->rent_amount + ($this->pet_rent ?? 0);
     }
 
     public function isActive(): bool

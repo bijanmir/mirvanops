@@ -4,22 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Laravel\Cashier\Billable;
 
 class Company extends Model
 {
-    use Billable;
-
     protected $fillable = [
         'name',
-        'slug',
-        'phone',
         'email',
+        'phone',
         'address',
         'city',
         'state',
         'zip',
-        'timezone',
     ];
 
     public function users(): HasMany
@@ -47,14 +42,14 @@ class Company extends Model
         return $this->hasMany(Lease::class);
     }
 
-    public function vendors(): HasMany
-    {
-        return $this->hasMany(Vendor::class);
-    }
-
     public function maintenanceRequests(): HasMany
     {
         return $this->hasMany(MaintenanceRequest::class);
+    }
+
+    public function vendors(): HasMany
+    {
+        return $this->hasMany(Vendor::class);
     }
 
     public function activityLogs(): HasMany

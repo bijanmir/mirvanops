@@ -12,51 +12,40 @@ class PropertyShow extends Component
     public Property $property;
     
     public $showUnitModal = false;
-    public $showDeleteUnitModal = false;
+    public $showDeleteModal = false;
     public $editingUnit = null;
     public $unitToDelete = null;
-    public $statusFilter = '';
     
-    // Unit form fields
     public $unit_number = '';
-    public $beds = '';
-    public $baths = '';
-    public $sqft = '';
+    public $floor = '';
+    public $bedrooms = '1';
+    public $bathrooms = '1';
+    public $square_feet = '';
     public $market_rent = '';
     public $status = 'vacant';
-    public $unit_notes = '';
+    public $description = '';
+
+    public $statusFilter = '';
 
     public function mount($propertyId)
     {
         $this->property = Property::where('company_id', auth()->user()->company_id)
-            ->with(['units' => function($query) {
-                $query->orderBy('unit_number');
-            }])
             ->findOrFail($propertyId);
-    }
-
-    public function setStatusFilter($status)
-    {
-        $this->statusFilter = $status;
-    }
-
-    public function setUnitStatus($status)
-    {
-        $this->status = $status;
     }
 
     public function openUnitModal($unitId = null)
     {
         if ($unitId) {
-            $unit = Unit::where('company_id', auth()->user()->company_id)->findOrFail($unitId);
+            $unit = Unit::with('currentLease')->findOrFail($unitId);
             $this->editingUnit = $unit;
             $this->unit_number = $unit->unit_number;
-            $this->beds = $unit->beds;
-            $this->baths = $unit->baths;
-            $this->sqft = $unit->sqft;
-            $this->market_rent = $unit->market_rent;
+            $this->floor = $unit->floor ?? '';
+            $this->bedrooms = $unit->bedrooms;
+            $this->bathrooms = $unit->bathrooms;
+            $this->square_feet = $unit->square_feet ?? '';
+            $this->market_rent = $unit->market_rent ?? '';
             $this->status = $unit->status;
-            $this->unit_notes = $unit->notes ?? '';
+            $this->description = $unit->description ?? '';
         } else {
             $this->resetUnitForm();
         }
@@ -73,98 +62,117 @@ class PropertyShow extends Component
     {
         $this->editingUnit = null;
         $this->unit_number = '';
-        $this->beds = '';
-        $this->baths = '';
-        $this->sqft = '';
+        $this->floor = '';
+        $this->bedrooms = '1';
+        $this->bathrooms = '1';
+        $this->square_feet = '';
         $this->market_rent = '';
         $this->status = 'vacant';
-        $this->unit_notes = '';
-        $this->resetValidation();
+        $this->description = '';
     }
 
     public function saveUnit()
     {
-        $validated = $this->validate([
+        $this->validate([
             'unit_number' => 'required|string|max:50',
-            'beds' => 'nullable|numeric|min:0|max:20',
-            'baths' => 'nullable|numeric|min:0|max:20',
-            'sqft' => 'nullable|integer|min:0|max:100000',
-            'market_rent' => 'nullable|numeric|min:0|max:1000000',
-            'status' => 'required|in:vacant,occupied,maintenance,offline',
-            'unit_notes' => 'nullable|string',
+            'bedrooms' => 'required|integer|min:0',
+            'bathrooms' => 'required|numeric|min:0',
+            'square_feet' => 'nullable|integer|min:0',
+            'market_rent' => 'nullable|numeric|min:0',
+            'status' => 'required|in:vacant,occupied,maintenance',
         ]);
 
         $data = [
             'company_id' => auth()->user()->company_id,
             'property_id' => $this->property->id,
             'unit_number' => $this->unit_number,
-            'beds' => $this->beds ?: null,
-            'baths' => $this->baths ?: null,
-            'sqft' => $this->sqft ?: null,
+            'floor' => $this->floor ?: null,
+            'bedrooms' => $this->bedrooms,
+            'bathrooms' => $this->bathrooms,
+            'square_feet' => $this->square_feet ?: null,
             'market_rent' => $this->market_rent ?: null,
-            'status' => $this->status,
-            'notes' => $this->unit_notes ?: null,
+            'description' => $this->description ?: null,
         ];
 
         if ($this->editingUnit) {
+            // Don't change status if there's an active lease
+            if (!$this->editingUnit->currentLease) {
+                $data['status'] = $this->status;
+            }
+            
             $this->editingUnit->update($data);
             ActivityLog::log('updated', $this->editingUnit);
             session()->flash('success', 'Unit updated successfully.');
         } else {
+            $data['status'] = $this->status;
             $unit = Unit::create($data);
             ActivityLog::log('created', $unit);
-            session()->flash('success', 'Unit created successfully.');
+            session()->flash('success', 'Unit added successfully.');
         }
 
         $this->closeUnitModal();
-        
-        // Refresh the property with its units
-        $this->property = Property::where('company_id', auth()->user()->company_id)
-            ->with(['units' => function($query) {
-                $query->orderBy('unit_number');
-            }])
-            ->find($this->property->id);
-        
-        // Update unit count
-        $this->property->update(['unit_count' => $this->property->units->count()]);
+        $this->property->refresh();
     }
 
     public function confirmDeleteUnit($unitId)
     {
+        $unit = Unit::with('currentLease')->findOrFail($unitId);
+        
+        if ($unit->currentLease) {
+            session()->flash('error', 'Cannot delete unit with an active lease. Terminate the lease first.');
+            return;
+        }
+        
         $this->unitToDelete = $unitId;
-        $this->showDeleteUnitModal = true;
+        $this->showDeleteModal = true;
     }
 
     public function deleteUnit()
     {
-        $unit = Unit::where('company_id', auth()->user()->company_id)->findOrFail($this->unitToDelete);
+        $unit = Unit::with('currentLease')->findOrFail($this->unitToDelete);
+        
+        if ($unit->currentLease) {
+            session()->flash('error', 'Cannot delete unit with an active lease.');
+            $this->showDeleteModal = false;
+            return;
+        }
+        
         ActivityLog::log('deleted', $unit);
         $unit->delete();
         
-        $this->showDeleteUnitModal = false;
+        $this->showDeleteModal = false;
         $this->unitToDelete = null;
-        
-        // Refresh the property with its units
-        $this->property = Property::where('company_id', auth()->user()->company_id)
-            ->with(['units' => function($query) {
-                $query->orderBy('unit_number');
-            }])
-            ->find($this->property->id);
-        
-        // Update unit count
-        $this->property->update(['unit_count' => $this->property->units->count()]);
+        $this->property->refresh();
         
         session()->flash('success', 'Unit deleted successfully.');
     }
 
-    public function cancelDeleteUnit()
+    public function cancelDelete()
     {
-        $this->showDeleteUnitModal = false;
+        $this->showDeleteModal = false;
         $this->unitToDelete = null;
     }
 
     public function render()
     {
-        return view('livewire.properties.property-show');
+        $units = $this->property->units()
+            ->with(['currentLease.tenant'])
+            ->when($this->statusFilter, function ($query) {
+                $query->where('status', $this->statusFilter);
+            })
+            ->orderBy('unit_number')
+            ->get();
+
+        $stats = [
+            'total' => $this->property->units()->count(),
+            'occupied' => $this->property->units()->where('status', 'occupied')->count(),
+            'vacant' => $this->property->units()->where('status', 'vacant')->count(),
+            'maintenance' => $this->property->units()->where('status', 'maintenance')->count(),
+        ];
+
+        return view('livewire.properties.property-show', [
+            'units' => $units,
+            'stats' => $stats,
+        ]);
     }
 }

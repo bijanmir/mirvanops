@@ -19,29 +19,7 @@ class MaintenanceList extends Component
     public $showDeleteModal = false;
     public $requestToDelete = null;
 
-    protected $queryString = [
-        'search' => ['except' => ''],
-        'statusFilter' => ['except' => ''],
-        'priorityFilter' => ['except' => ''],
-        'propertyFilter' => ['except' => ''],
-    ];
-
     public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingStatusFilter()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingPriorityFilter()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingPropertyFilter()
     {
         $this->resetPage();
     }
@@ -59,10 +37,10 @@ class MaintenanceList extends Component
         
         ActivityLog::log('deleted', $request);
         $request->delete();
-
+        
         $this->showDeleteModal = false;
         $this->requestToDelete = null;
-
+        
         session()->flash('success', 'Maintenance request deleted successfully.');
     }
 
@@ -77,50 +55,34 @@ class MaintenanceList extends Component
         $companyId = auth()->user()->company_id;
 
         $requests = MaintenanceRequest::where('company_id', $companyId)
-            ->with(['unit.property', 'assignedTo'])
+            ->with(['property', 'unit', 'vendor', 'reportedBy'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('title', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%')
-                      ->orWhereHas('unit', function ($uq) {
-                          $uq->where('unit_number', 'like', '%' . $this->search . '%');
-                      })
-                      ->orWhereHas('unit.property', function ($pq) {
-                          $pq->where('name', 'like', '%' . $this->search . '%');
-                      });
+                      ->orWhere('description', 'like', '%' . $this->search . '%');
                 });
             })
-            ->when($this->statusFilter, function ($query) {
-                $query->where('status', $this->statusFilter);
-            })
-            ->when($this->priorityFilter, function ($query) {
-                $query->where('priority', $this->priorityFilter);
-            })
-            ->when($this->propertyFilter, function ($query) {
-                $query->whereHas('unit', function ($q) {
-                    $q->where('property_id', $this->propertyFilter);
-                });
-            })
-            ->orderByRaw("FIELD(priority, 'emergency', 'high', 'medium', 'low')")
-            ->orderByRaw("FIELD(status, 'new', 'assigned', 'in_progress', 'on_hold', 'completed', 'cancelled')")
+            ->when($this->statusFilter, fn($q) => $q->where('status', $this->statusFilter))
+            ->when($this->priorityFilter, fn($q) => $q->where('priority', $this->priorityFilter))
+            ->when($this->propertyFilter, fn($q) => $q->where('property_id', $this->propertyFilter))
             ->latest()
-            ->paginate(12);
-
-        $properties = Property::where('company_id', $companyId)->orderBy('name')->get();
+            ->paginate(10);
 
         $stats = [
             'total' => MaintenanceRequest::where('company_id', $companyId)->count(),
-            'open' => MaintenanceRequest::where('company_id', $companyId)->whereIn('status', ['new', 'assigned', 'in_progress'])->count(),
             'new' => MaintenanceRequest::where('company_id', $companyId)->where('status', 'new')->count(),
+            'assigned' => MaintenanceRequest::where('company_id', $companyId)->where('status', 'assigned')->count(),
             'in_progress' => MaintenanceRequest::where('company_id', $companyId)->where('status', 'in_progress')->count(),
+            'on_hold' => MaintenanceRequest::where('company_id', $companyId)->where('status', 'on_hold')->count(),
             'completed' => MaintenanceRequest::where('company_id', $companyId)->where('status', 'completed')->count(),
-            'emergency' => MaintenanceRequest::where('company_id', $companyId)->where('priority', 'emergency')->whereNotIn('status', ['completed', 'cancelled'])->count(),
         ];
+
+        $properties = Property::where('company_id', $companyId)->orderBy('name')->get();
 
         return view('livewire.maintenance.maintenance-list', [
             'requests' => $requests,
-            'properties' => $properties,
             'stats' => $stats,
+            'properties' => $properties,
         ]);
     }
 }

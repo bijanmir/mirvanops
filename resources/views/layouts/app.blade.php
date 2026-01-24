@@ -13,14 +13,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     
-    <!-- Alpine.js -->
-    
     <style>
         /* ========================================
            Theme Variables
         ======================================== */
         :root {
-            --transition-speed: 200ms;
+            --transition-speed: 150ms;
         }
 
         /* Dark Theme (Default) */
@@ -112,12 +110,6 @@
         /* ========================================
            Base Styles
         ======================================== */
-        * {
-            transition: background-color var(--transition-speed) ease,
-                        border-color var(--transition-speed) ease,
-                        color var(--transition-speed) ease;
-        }
-
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background-color: var(--bg-primary);
@@ -136,7 +128,6 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-primary);
             box-shadow: var(--shadow-md);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
@@ -153,7 +144,6 @@
         .sidebar-link {
             color: var(--text-muted);
             position: relative;
-            transition: all 0.2s ease;
         }
 
         .sidebar-link:hover {
@@ -176,10 +166,8 @@
             height: 0;
             background: var(--accent);
             border-radius: 0 4px 4px 0;
-            transition: height 0.2s ease;
         }
 
-        .sidebar-link:hover::before,
         .sidebar-link.active::before {
             height: 50%;
         }
@@ -191,48 +179,14 @@
             overflow: hidden;
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, var(--accent-muted) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
         .btn-primary {
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
             color: white;
             font-weight: 500;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn-primary:hover::before {
-            left: 100%;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow: 0 10px 40px var(--accent-glow);
         }
 
@@ -240,7 +194,6 @@
             background: var(--bg-input);
             border: 1px solid var(--border-secondary);
             color: var(--text-primary);
-            transition: all 0.2s ease;
         }
 
         .btn-secondary:hover {
@@ -252,7 +205,6 @@
             background: var(--bg-input);
             border: 1px solid var(--border-primary);
             color: var(--text-primary);
-            transition: all 0.2s ease;
         }
 
         .input-field::placeholder {
@@ -299,7 +251,7 @@
         }
 
         /* ========================================
-           Animations
+           Animations - Only when needed
         ======================================== */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -317,7 +269,7 @@
         }
 
         .animate-fade-in {
-            animation: fadeIn 0.4s ease-out;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .animate-float {
@@ -384,7 +336,6 @@
             background: var(--bg-input);
             border: 1px solid var(--border-primary);
             color: var(--text-muted);
-            transition: all 0.2s ease;
         }
 
         .theme-toggle:hover {
@@ -443,6 +394,19 @@
                         Tenants
                     </a>
 
+                    <a href="{{ route('leases.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('leases.*') ? 'active' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Leases
+                        @php
+                            $activeLeases = auth()->user()->company->leases()->where('status', 'active')->count();
+                        @endphp
+                        @if($activeLeases > 0)
+                        <span class="ml-auto badge-success text-xs font-semibold px-2 py-0.5 rounded-full">{{ $activeLeases }}</span>
+                        @endif
+                    </a>
+
                     <p class="px-4 text-xs font-semibold text-subtle uppercase tracking-wider mb-4 mt-8">Operations</p>
 
                     <a href="{{ route('maintenance.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('maintenance.*') ? 'active' : '' }}">
@@ -476,11 +440,9 @@
                             @click="theme = theme === 'dark' ? 'light' : 'dark'"
                             class="theme-toggle p-2 rounded-lg"
                         >
-                            <!-- Sun icon (shown in dark mode) -->
                             <svg x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
-                            <!-- Moon icon (shown in light mode) -->
                             <svg x-show="theme === 'light'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                             </svg>
@@ -498,7 +460,7 @@
                         </div>
                         <form method="POST" action="{{ route('logout') }}" class="opacity-0 group-hover:opacity-100 transition-opacity">
                             @csrf
-                            <button type="submit" class="p-2 text-muted hover:text-primary rounded-lg hover:bg-input transition-colors" title="Sign out">
+                            <button type="submit" class="p-2 text-muted hover:text-primary rounded-lg hover:bg-input" title="Sign out">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
@@ -511,7 +473,7 @@
 
         <!-- Mobile Header -->
         <div class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card backdrop-blur-xl border-b border-primary z-20 flex items-center justify-between px-4">
-            <button onclick="document.getElementById('mobile-menu').classList.remove('translate-x-full')" class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input transition-colors">
+            <button onclick="document.getElementById('mobile-menu').classList.remove('translate-x-full')" class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -522,7 +484,6 @@
                 </div>
                 <span class="ml-2 text-lg font-semibold text-primary">MirvanOps</span>
             </div>
-            <!-- Mobile Theme Toggle -->
             <button 
                 @click="theme = theme === 'dark' ? 'light' : 'dark'"
                 class="theme-toggle p-2 rounded-lg"
@@ -542,7 +503,7 @@
             <div class="absolute right-0 top-0 bottom-0 w-72 bg-card border-l border-primary">
                 <div class="h-16 flex items-center justify-between px-6 border-b border-primary">
                     <span class="text-lg font-semibold text-primary">Menu</span>
-                    <button onclick="document.getElementById('mobile-menu').classList.add('translate-x-full')" class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input transition-colors">
+                    <button onclick="document.getElementById('mobile-menu').classList.add('translate-x-full')" class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -566,6 +527,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         Tenants
+                    </a>
+                    <a href="{{ route('leases.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('leases.*') ? 'active' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Leases
                     </a>
                     <a href="{{ route('maintenance.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('maintenance.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -594,7 +561,7 @@
                         </div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="p-2 text-muted hover:text-primary rounded-lg hover:bg-input transition-colors">
+                            <button type="submit" class="p-2 text-muted hover:text-primary rounded-lg hover:bg-input">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
@@ -609,7 +576,7 @@
         <main class="flex-1 lg:ml-72">
             <div class="lg:hidden h-16"></div>
             
-            <div class="p-4 sm:p-6 lg:p-8 animate-fade-in">
+            <div class="p-4 sm:p-6 lg:p-8">
                 <!-- Flash Messages -->
                 @if(session('success'))
                 <div class="mb-6 glass-card rounded-xl p-4 border-l-4 border-green-500">
