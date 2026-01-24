@@ -130,6 +130,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/leases/{id}/edit', function ($id) {
         return view('leases.edit', ['leaseId' => $id]);
     })->name('leases.edit');
+    // Payments
+    Route::get('/payments', fn() => view('payments.index'))->name('payments.index');
+    Route::get('/payments/create', fn() => view('payments.create'))->name('payments.create');
+    Route::get('/payments/{id}/edit', fn($id) => view('payments.edit', ['paymentId' => $id]))->name('payments.edit');
 });
 
 require __DIR__ . '/auth.php';

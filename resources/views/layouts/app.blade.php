@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ theme: localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') }" x-init="$watch('theme', val => { localStorage.setItem('theme', val); document.documentElement.setAttribute('data-theme', val) }); document.documentElement.setAttribute('data-theme', theme)" :data-theme="theme">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    x-data="{ theme: localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') }"
+    x-init="$watch('theme', val => { localStorage.setItem('theme', val); document.documentElement.setAttribute('data-theme', val) }); document.documentElement.setAttribute('data-theme', theme)"
+    :data-theme="theme">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +16,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    
+
     <style>
         /* ========================================
            Theme Variables
@@ -30,21 +34,21 @@
             --bg-card-hover: rgba(255, 255, 255, 0.04);
             --bg-input: rgba(255, 255, 255, 0.03);
             --bg-input-focus: rgba(255, 255, 255, 0.06);
-            
+
             --border-primary: rgba(255, 255, 255, 0.06);
             --border-secondary: rgba(255, 255, 255, 0.1);
             --border-hover: rgba(255, 255, 255, 0.15);
-            
+
             --text-primary: #f9fafb;
             --text-secondary: rgba(255, 255, 255, 0.7);
             --text-muted: rgba(255, 255, 255, 0.5);
             --text-subtle: rgba(255, 255, 255, 0.3);
-            
+
             --accent: #f59e0b;
             --accent-hover: #fbbf24;
             --accent-muted: rgba(245, 158, 11, 0.15);
             --accent-glow: rgba(245, 158, 11, 0.25);
-            
+
             --success: #10b981;
             --success-muted: rgba(16, 185, 129, 0.15);
             --warning: #f59e0b;
@@ -53,13 +57,13 @@
             --danger-muted: rgba(239, 68, 68, 0.15);
             --info: #3b82f6;
             --info-muted: rgba(59, 130, 246, 0.15);
-            
+
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
             --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.6);
-            
-            --gradient-mesh: 
+
+            --gradient-mesh:
                 radial-gradient(ellipse at 0% 0%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
                 radial-gradient(ellipse at 100% 100%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
         }
@@ -73,21 +77,21 @@
             --bg-card-hover: rgba(255, 255, 255, 0.95);
             --bg-input: rgba(0, 0, 0, 0.02);
             --bg-input-focus: rgba(0, 0, 0, 0.04);
-            
+
             --border-primary: rgba(0, 0, 0, 0.06);
             --border-secondary: rgba(0, 0, 0, 0.1);
             --border-hover: rgba(0, 0, 0, 0.15);
-            
+
             --text-primary: #111827;
             --text-secondary: rgba(0, 0, 0, 0.7);
             --text-muted: rgba(0, 0, 0, 0.5);
             --text-subtle: rgba(0, 0, 0, 0.3);
-            
+
             --accent: #d97706;
             --accent-hover: #b45309;
             --accent-muted: rgba(217, 119, 6, 0.1);
             --accent-glow: rgba(217, 119, 6, 0.2);
-            
+
             --success: #059669;
             --success-muted: rgba(5, 150, 105, 0.1);
             --warning: #d97706;
@@ -96,13 +100,13 @@
             --danger-muted: rgba(220, 38, 38, 0.1);
             --info: #2563eb;
             --info-muted: rgba(37, 99, 235, 0.1);
-            
+
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
             --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.15);
-            
-            --gradient-mesh: 
+
+            --gradient-mesh:
                 radial-gradient(ellipse at 0% 0%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
                 radial-gradient(ellipse at 100% 100%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
         }
@@ -218,16 +222,41 @@
             outline: none;
         }
 
-        .text-primary { color: var(--text-primary); }
-        .text-secondary { color: var(--text-secondary); }
-        .text-muted { color: var(--text-muted); }
-        .text-subtle { color: var(--text-subtle); }
-        .text-accent { color: var(--accent); }
+        .text-primary {
+            color: var(--text-primary);
+        }
 
-        .bg-card { background: var(--bg-card); }
-        .bg-input { background: var(--bg-input); }
-        .border-primary { border-color: var(--border-primary); }
-        .border-secondary { border-color: var(--border-secondary); }
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        .text-subtle {
+            color: var(--text-subtle);
+        }
+
+        .text-accent {
+            color: var(--accent);
+        }
+
+        .bg-card {
+            background: var(--bg-card);
+        }
+
+        .bg-input {
+            background: var(--bg-input);
+        }
+
+        .border-primary {
+            border-color: var(--border-primary);
+        }
+
+        .border-secondary {
+            border-color: var(--border-secondary);
+        }
 
         /* Badge Colors */
         .badge-success {
@@ -254,18 +283,39 @@
            Animations - Only when needed
         ======================================== */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         @keyframes pulse-slow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.3; }
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
         }
 
         .animate-fade-in {
@@ -345,6 +395,7 @@
         }
     </style>
 </head>
+
 <body class="antialiased">
     <!-- Background orbs -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
@@ -359,7 +410,8 @@
                 <!-- Logo -->
                 <div class="h-20 flex items-center px-6 border-b border-primary">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg group-hover:shadow-amber-500/30 transition-shadow">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg group-hover:shadow-amber-500/30 transition-shadow">
                             <span class="text-white font-bold text-lg">M</span>
                         </div>
                         <div>
@@ -372,60 +424,83 @@
                 <!-- Navigation -->
                 <nav class="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
                     <p class="px-4 text-xs font-semibold text-subtle uppercase tracking-wider mb-4">Main Menu</p>
-                    
-                    <a href="{{ route('dashboard') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+
+                    <a href="{{ route('dashboard') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
                         </svg>
                         Dashboard
                     </a>
 
-                    <a href="{{ route('properties.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('properties.*') ? 'active' : '' }}">
+                    <a href="{{ route('properties.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('properties.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                         </svg>
                         Properties
                     </a>
 
-                    <a href="{{ route('tenants.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('tenants.*') ? 'active' : '' }}">
+                    <a href="{{ route('tenants.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('tenants.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         Tenants
                     </a>
 
-                    <a href="{{ route('leases.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('leases.*') ? 'active' : '' }}">
+                    <a href="{{ route('leases.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('leases.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         Leases
                         @php
                             $activeLeases = auth()->user()->company->leases()->where('status', 'active')->count();
                         @endphp
                         @if($activeLeases > 0)
-                        <span class="ml-auto badge-success text-xs font-semibold px-2 py-0.5 rounded-full">{{ $activeLeases }}</span>
+                            <span
+                                class="ml-auto badge-success text-xs font-semibold px-2 py-0.5 rounded-full">{{ $activeLeases }}</span>
                         @endif
+                    </a>
+                    <a href="{{ route('payments.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('payments.*') ? 'active' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Payments
                     </a>
 
                     <p class="px-4 text-xs font-semibold text-subtle uppercase tracking-wider mb-4 mt-8">Operations</p>
 
-                    <a href="{{ route('maintenance.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('maintenance.*') ? 'active' : '' }}">
+                    <a href="{{ route('maintenance.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('maintenance.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         Maintenance
                         @php
                             $openRequests = auth()->user()->company->maintenanceRequests()->whereIn('status', ['new', 'assigned', 'in_progress'])->count();
                         @endphp
                         @if($openRequests > 0)
-                        <span class="ml-auto badge-warning text-xs font-semibold px-2 py-0.5 rounded-full">{{ $openRequests }}</span>
+                            <span
+                                class="ml-auto badge-warning text-xs font-semibold px-2 py-0.5 rounded-full">{{ $openRequests }}</span>
                         @endif
                     </a>
 
-                    <a href="{{ route('vendors.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('vendors.*') ? 'active' : '' }}">
+                    <a href="{{ route('vendors.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('vendors.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         Vendors
                     </a>
@@ -436,33 +511,40 @@
                     <!-- Theme Toggle -->
                     <div class="flex items-center justify-between px-3 py-2">
                         <span class="text-sm text-muted">Theme</span>
-                        <button 
-                            @click="theme = theme === 'dark' ? 'light' : 'dark'"
-                            class="theme-toggle p-2 rounded-lg"
-                        >
-                            <svg x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        <button @click="theme = theme === 'dark' ? 'light' : 'dark'"
+                            class="theme-toggle p-2 rounded-lg">
+                            <svg x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
-                            <svg x-show="theme === 'light'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            <svg x-show="theme === 'light'" class="w-5 h-5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                             </svg>
                         </button>
                     </div>
 
                     <!-- User Info -->
                     <div class="flex items-center p-3 rounded-xl bg-input group cursor-pointer">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                            <span class="text-sm font-semibold text-white">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <span
+                                class="text-sm font-semibold text-white">{{ substr(auth()->user()->name, 0, 1) }}</span>
                         </div>
                         <div class="ml-3 flex-1 min-w-0">
                             <p class="text-sm font-medium text-primary truncate">{{ auth()->user()->name }}</p>
                             <p class="text-xs text-muted truncate">{{ auth()->user()->company->name }}</p>
                         </div>
-                        <form method="POST" action="{{ route('logout') }}" class="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <form method="POST" action="{{ route('logout') }}"
+                            class="opacity-0 group-hover:opacity-100 transition-opacity">
                             @csrf
-                            <button type="submit" class="p-2 text-muted hover:text-primary rounded-lg hover:bg-input" title="Sign out">
+                            <button type="submit" class="p-2 text-muted hover:text-primary rounded-lg hover:bg-input"
+                                title="Sign out">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
                             </button>
                         </form>
@@ -472,88 +554,109 @@
         </aside>
 
         <!-- Mobile Header -->
-        <div class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card backdrop-blur-xl border-b border-primary z-20 flex items-center justify-between px-4">
-            <button onclick="document.getElementById('mobile-menu').classList.remove('translate-x-full')" class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input">
+        <div
+            class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card backdrop-blur-xl border-b border-primary z-20 flex items-center justify-between px-4">
+            <button onclick="document.getElementById('mobile-menu').classList.remove('translate-x-full')"
+                class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
             <div class="flex items-center">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+                <div
+                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                     <span class="text-white font-bold text-sm">M</span>
                 </div>
                 <span class="ml-2 text-lg font-semibold text-primary">MirvanOps</span>
             </div>
-            <button 
-                @click="theme = theme === 'dark' ? 'light' : 'dark'"
-                class="theme-toggle p-2 rounded-lg"
-            >
+            <button @click="theme = theme === 'dark' ? 'light' : 'dark'" class="theme-toggle p-2 rounded-lg">
                 <svg x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
                 <svg x-show="theme === 'light'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
             </button>
         </div>
 
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="lg:hidden fixed inset-0 z-50 translate-x-full transition-transform duration-300">
-            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="document.getElementById('mobile-menu').classList.add('translate-x-full')"></div>
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onclick="document.getElementById('mobile-menu').classList.add('translate-x-full')"></div>
             <div class="absolute right-0 top-0 bottom-0 w-72 bg-card border-l border-primary">
                 <div class="h-16 flex items-center justify-between px-6 border-b border-primary">
                     <span class="text-lg font-semibold text-primary">Menu</span>
-                    <button onclick="document.getElementById('mobile-menu').classList.add('translate-x-full')" class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input">
+                    <button onclick="document.getElementById('mobile-menu').classList.add('translate-x-full')"
+                        class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
                 <nav class="px-4 py-6 space-y-2">
-                    <a href="{{ route('dashboard') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
                         </svg>
                         Dashboard
                     </a>
-                    <a href="{{ route('properties.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('properties.*') ? 'active' : '' }}">
+                    <a href="{{ route('properties.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('properties.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                         </svg>
                         Properties
                     </a>
-                    <a href="{{ route('tenants.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('tenants.*') ? 'active' : '' }}">
+                    <a href="{{ route('tenants.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('tenants.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         Tenants
                     </a>
-                    <a href="{{ route('leases.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('leases.*') ? 'active' : '' }}">
+                    <a href="{{ route('leases.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('leases.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         Leases
                     </a>
-                    <a href="{{ route('maintenance.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('maintenance.*') ? 'active' : '' }}">
+                    <a href="{{ route('maintenance.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('maintenance.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         Maintenance
                     </a>
-                    <a href="{{ route('vendors.index') }}" class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('vendors.*') ? 'active' : '' }}">
+                    <a href="{{ route('vendors.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('vendors.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         Vendors
                     </a>
                 </nav>
-                
+
                 <!-- Mobile User Menu -->
                 <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-primary">
                     <div class="flex items-center p-3 rounded-xl bg-input">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                            <span class="text-sm font-semibold text-white">{{ substr(auth()->user()->name, 0, 1) }}</span>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <span
+                                class="text-sm font-semibold text-white">{{ substr(auth()->user()->name, 0, 1) }}</span>
                         </div>
                         <div class="ml-3 flex-1 min-w-0">
                             <p class="text-sm font-medium text-primary truncate">{{ auth()->user()->name }}</p>
@@ -563,7 +666,8 @@
                             @csrf
                             <button type="submit" class="p-2 text-muted hover:text-primary rounded-lg hover:bg-input">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
                             </button>
                         </form>
@@ -575,29 +679,33 @@
         <!-- Main Content -->
         <main class="flex-1 lg:ml-72">
             <div class="lg:hidden h-16"></div>
-            
+
             <div class="p-4 sm:p-6 lg:p-8">
                 <!-- Flash Messages -->
                 @if(session('success'))
-                <div class="mb-6 glass-card rounded-xl p-4 border-l-4 border-green-500">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p class="text-green-500 text-sm font-medium">{{ session('success') }}</p>
+                    <div class="mb-6 glass-card rounded-xl p-4 border-l-4 border-green-500">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="text-green-500 text-sm font-medium">{{ session('success') }}</p>
+                        </div>
                     </div>
-                </div>
                 @endif
 
                 @if(session('error'))
-                <div class="mb-6 glass-card rounded-xl p-4 border-l-4 border-red-500">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-red-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p class="text-red-500 text-sm font-medium">{{ session('error') }}</p>
+                    <div class="mb-6 glass-card rounded-xl p-4 border-l-4 border-red-500">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-red-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="text-red-500 text-sm font-medium">{{ session('error') }}</p>
+                        </div>
                     </div>
-                </div>
                 @endif
 
                 {{ $slot }}
@@ -607,4 +715,5 @@
 
     @livewireScripts
 </body>
+
 </html>
