@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lease extends Model
@@ -12,23 +11,23 @@ class Lease extends Model
     protected $fillable = [
         'company_id',
         'unit_id',
+        'tenant_id',
         'start_date',
         'end_date',
         'rent_amount',
-        'deposit_amount',
+        'security_deposit',
+        'payment_due_day',
+        'lease_type',
         'status',
-        'move_in_date',
-        'move_out_date',
         'notes',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'move_in_date' => 'date',
-        'move_out_date' => 'date',
         'rent_amount' => 'decimal:2',
-        'deposit_amount' => 'decimal:2',
+        'security_deposit' => 'decimal:2',
+        'payment_due_day' => 'integer',
     ];
 
     public function company(): BelongsTo
@@ -41,19 +40,14 @@ class Lease extends Model
         return $this->belongsTo(Unit::class);
     }
 
-    public function tenants(): BelongsToMany
+    public function tenant(): BelongsTo
     {
-        return $this->belongsToMany(Tenant::class)->withPivot('is_primary')->withTimestamps();
+        return $this->belongsTo(Tenant::class);
     }
 
-    public function primaryTenant()
+    public function payments(): HasMany
     {
-        return $this->tenants()->wherePivot('is_primary', true)->first();
-    }
-
-    public function maintenanceRequests(): HasMany
-    {
-        return $this->hasMany(MaintenanceRequest::class);
+        return $this->hasMany(Payment::class);
     }
 
     public function isActive(): bool
@@ -61,8 +55,10 @@ class Lease extends Model
         return $this->status === 'active';
     }
 
-    public function isExpiringSoon(int $days = 30): bool
+    public function isExpiringSoon(): bool
     {
-        return $this->end_date->isBetween(now(), now()->addDays($days));
+        return $this->status === 'active' 
+            && $this->end_date->diffInDays(now()) <= 30 
+            && $this->end_date->isFuture();
     }
 }

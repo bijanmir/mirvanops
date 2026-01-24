@@ -117,6 +117,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/tenants/{id}/edit', function ($id) {
         return view('tenants.edit', ['tenantId' => $id]);
     })->name('tenants.edit');
+
+    // Leases
+    Route::get('/leases', function () {
+        return view('leases.index');
+    })->name('leases.index');
+
+    Route::get('/leases/create', function () {
+        return view('leases.create');
+    })->name('leases.create');
+
+    Route::get('/leases/{id}/edit', function ($id) {
+        return view('leases.edit', ['leaseId' => $id]);
+    })->name('leases.edit');
 });
 
 require __DIR__ . '/auth.php';

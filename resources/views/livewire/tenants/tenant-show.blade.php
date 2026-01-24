@@ -60,14 +60,8 @@
 
             <!-- Leases -->
             <div class="glass-card rounded-2xl overflow-hidden">
-                <div class="p-4 sm:p-6 border-b border-primary flex items-center justify-between">
+                <div class="p-4 sm:p-6 border-b border-primary">
                     <h2 class="text-lg font-semibold text-primary">Leases</h2>
-                    <a href="{{ route('leases.create', ['tenant_id' => $tenant->id]) }}" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">
-                        <svg class="w-4 h-4 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" />
-                        </svg>
-                        New Lease
-                    </a>
                 </div>
                 @if($tenant->leases->count() > 0)
                 <div class="divide-y divide-primary">
@@ -92,6 +86,7 @@
                 @else
                 <div class="p-8 text-center">
                     <p class="text-muted">No leases found for this tenant.</p>
+                    <p class="text-sm text-muted mt-2">Leases can be created from the Leases module.</p>
                 </div>
                 @endif
             </div>
