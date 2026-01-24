@@ -100,6 +100,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/vendors/{id}/edit', function ($id) {
         return view('vendors.edit', ['vendorId' => $id]);
     })->name('vendors.edit');
+
+    // Tenants
+    Route::get('/tenants', function () {
+        return view('tenants.index');
+    })->name('tenants.index');
+
+    Route::get('/tenants/create', function () {
+        return view('tenants.create');
+    })->name('tenants.create');
+
+    Route::get('/tenants/{id}', function ($id) {
+        return view('tenants.show', ['tenantId' => $id]);
+    })->name('tenants.show');
+
+    Route::get('/tenants/{id}/edit', function ($id) {
+        return view('tenants.edit', ['tenantId' => $id]);
+    })->name('tenants.edit');
 });
 
 require __DIR__ . '/auth.php';

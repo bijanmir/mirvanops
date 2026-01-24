@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tenant extends Model
 {
@@ -14,12 +14,22 @@ class Tenant extends Model
         'last_name',
         'email',
         'phone',
+        'alternate_phone',
         'date_of_birth',
+        'ssn_last_four',
+        'drivers_license',
+        'emergency_contact_name',
+        'emergency_contact_phone',
+        'employer',
+        'employer_phone',
+        'annual_income',
+        'status',
         'notes',
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
+        'annual_income' => 'decimal:2',
     ];
 
     public function company(): BelongsTo
@@ -27,13 +37,13 @@ class Tenant extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function leases(): BelongsToMany
+    public function leases(): HasMany
     {
-        return $this->belongsToMany(Lease::class)->withPivot('is_primary')->withTimestamps();
+        return $this->hasMany(Lease::class);
     }
 
     public function getFullNameAttribute(): string
     {
-        return "{$this->first_name} {$this->last_name}";
+        return $this->first_name . ' ' . $this->last_name;
     }
 }
