@@ -6,17 +6,14 @@
     <title>Create Account - Mirvan Properties</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap" rel="stylesheet" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
-        /* Prevent flash of unstyled content with Alpine */
-        [x-cloak] { display: none !important; }
-        
         :root { --transition-speed: 150ms; }
         
         [data-theme="dark"] {
             --bg-primary: #030712;
-            --bg-secondary: #0a0f1a;
             --bg-card: rgba(255, 255, 255, 0.03);
             --bg-input: rgba(255, 255, 255, 0.05);
             --border-primary: rgba(255, 255, 255, 0.08);
@@ -25,23 +22,22 @@
             --text-secondary: rgba(255, 255, 255, 0.7);
             --text-muted: rgba(255, 255, 255, 0.5);
             --accent: #f59e0b;
-            --accent-hover: #fbbf24;
             --accent-muted: rgba(245, 158, 11, 0.15);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
         
         [data-theme="light"] {
             --bg-primary: #f8fafc;
-            --bg-secondary: #ffffff;
             --bg-card: #ffffff;
-            --bg-input: #ffffff;
+            --bg-input: #f1f5f9;
             --border-primary: #e2e8f0;
             --border-secondary: #cbd5e1;
             --text-primary: #0f172a;
             --text-secondary: #475569;
             --text-muted: #64748b;
             --accent: #d97706;
-            --accent-hover: #b45309;
             --accent-muted: rgba(217, 119, 6, 0.1);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
         }
         
         body { 
@@ -54,30 +50,16 @@
         .glass-card { 
             background: var(--bg-card); 
             border: 1px solid var(--border-primary); 
-        }
-        
-        [data-theme="dark"] .glass-card {
-            backdrop-filter: blur(20px);
-        }
-        
-        [data-theme="light"] .glass-card {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-card);
         }
         
         .input-field { 
             background: var(--bg-input); 
             border: 1px solid var(--border-primary); 
-            color: var(--text-primary);
-            transition: all 0.2s ease;
+            color: var(--text-primary); 
         }
         
-        [data-theme="light"] .input-field {
-            border: 1px solid var(--border-secondary);
-        }
-        
-        .input-field::placeholder { 
-            color: var(--text-muted); 
-        }
+        .input-field::placeholder { color: var(--text-muted); }
         
         .input-field:focus { 
             border-color: var(--accent); 
@@ -87,8 +69,7 @@
         
         .btn-primary { 
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
-            color: white;
-            transition: all 0.2s ease;
+            color: white !important;
         }
         
         .btn-primary:hover { 
@@ -110,23 +91,6 @@
         [data-theme="dark"] .orb-1 { width: 500px; height: 500px; background: rgba(245, 158, 11, 0.08); top: -200px; right: -100px; }
         [data-theme="dark"] .orb-2 { width: 400px; height: 400px; background: rgba(59, 130, 246, 0.06); bottom: -100px; left: -100px; }
         [data-theme="light"] .orb { display: none; }
-        
-        /* Theme toggle */
-        .theme-toggle {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-        }
-        
-        .theme-toggle:hover {
-            color: var(--text-primary);
-            background: var(--bg-card);
-        }
-        
-        [data-theme="light"] .theme-toggle:hover {
-            background: #e2e8f0;
-        }
     </style>
 </head>
 <body class="antialiased">
@@ -142,7 +106,7 @@
                 <span class="text-white font-bold text-xl">M</span>
             </div>
             <div>
-                <span class="text-2xl font-bold text-primary">Mirvan</span>
+                <span class="text-2xl font-bold text-primary">Mirvan </span>
                 <span class="text-2xl font-light text-accent">Properties</span>
             </div>
         </a>
@@ -156,7 +120,7 @@
 
             @if ($errors->any())
             <div class="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-                <ul class="text-sm text-red-400 space-y-1">
+                <ul class="text-sm text-red-500 space-y-1">
                     @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                     @endforeach
@@ -166,6 +130,12 @@
 
             <form method="POST" action="{{ route('register') }}" class="space-y-5">
                 @csrf
+                
+                <!-- Honeypot -->
+                <div style="position: absolute; left: -9999px;" aria-hidden="true">
+                    <input type="text" name="website" tabindex="-1" autocomplete="off">
+                </div>
+                <input type="hidden" name="timestamp" value="{{ time() }}">
                 
                 <div>
                     <label for="name" class="block text-sm font-medium text-secondary mb-2">Full Name</label>
@@ -192,7 +162,15 @@
                     <input type="password" id="password_confirmation" name="password_confirmation" required class="input-field w-full px-4 py-3 rounded-xl" placeholder="••••••••">
                 </div>
 
-                <button type="submit" class="btn-primary w-full py-3 rounded-xl font-semibold">
+                <!-- reCAPTCHA -->
+                <div class="flex justify-center">
+                    <div class="g-recaptcha" data-sitekey="{{ config('recaptcha.site_key') }}" data-theme="dark"></div>
+                </div>
+                @error('g-recaptcha-response')
+                    <p class="text-red-500 text-sm text-center">{{ $message }}</p>
+                @enderror
+
+                <button type="submit" class="btn-primary w-full py-3 rounded-xl font-semibold transition-all">
                     Create Account
                 </button>
             </form>
@@ -214,10 +192,13 @@
         </div>
 
         <!-- Theme Toggle -->
-        <button @click="theme = theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('theme', theme); document.documentElement.setAttribute('data-theme', theme)" class="theme-toggle mt-6">
-            <svg x-cloak x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-            <svg x-cloak x-show="theme === 'light'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        <button @click="theme = theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('theme', theme); document.documentElement.setAttribute('data-theme', theme)" class="mt-6 p-2 rounded-lg text-muted hover:text-primary transition-colors">
+            <svg x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg x-show="theme === 'light'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
         </button>
+        
+        <!-- Back to home -->
+        <a href="/" class="mt-4 text-sm text-muted hover:text-primary transition-colors">← Back to home</a>
     </div>
 </body>
 </html>
