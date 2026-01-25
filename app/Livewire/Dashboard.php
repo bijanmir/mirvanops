@@ -11,16 +11,31 @@ use App\Models\Payment;
 use App\Models\MaintenanceRequest;
 use App\Models\ActivityLog;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class Dashboard extends Component
 {
     public function render()
     {
         $companyId = auth()->user()->company_id;
+        $cacheKey = "dashboard_data_{$companyId}";
+        
+        // Cache dashboard data for 5 minutes
+        $data = Cache::remember($cacheKey, 300, function () use ($companyId) {
+            return $this->getDashboardData($companyId);
+        });
+        
+        return view('livewire.dashboard', $data);
+    }
+    
+    protected function getDashboardData($companyId)
+    {
         $now = now();
         $currentMonth = $now->format('F Y');
+        $monthStart = $now->copy()->startOfMonth();
+        $monthEnd = $now->copy()->endOfMonth();
 
-        // Basic counts
+        // Basic counts - single queries
         $stats = [
             'properties' => Property::where('company_id', $companyId)->count(),
             'units' => Unit::where('company_id', $companyId)->count(),
@@ -29,28 +44,28 @@ class Dashboard extends Component
         ];
 
         // Occupancy
-        $occupiedUnits = Unit::where('company_id', $companyId)->where('status', 'occupied')->count();
-        $totalUnits = $stats['units'];
-        $stats['occupancy_rate'] = $totalUnits > 0 ? round(($occupiedUnits / $totalUnits) * 100, 1) : 0;
-        $stats['vacant_units'] = Unit::where('company_id', $companyId)->where('status', 'vacant')->count();
+        $unitCounts = Unit::where('company_id', $companyId)
+            ->selectRaw("status, COUNT(*) as count")
+            ->groupBy('status')
+            ->pluck('count', 'status');
+        
+        $occupiedUnits = $unitCounts['occupied'] ?? 0;
+        $stats['vacant_units'] = $unitCounts['vacant'] ?? 0;
+        $stats['occupancy_rate'] = $stats['units'] > 0 ? round(($occupiedUnits / $stats['units']) * 100, 1) : 0;
 
-        // Financial - This Month
-        $monthStart = $now->copy()->startOfMonth();
-        $monthEnd = $now->copy()->endOfMonth();
-
-        $collectedThisMonth = Payment::where('company_id', $companyId)
+        // Financial - single query for payments
+        $paymentStats = Payment::where('company_id', $companyId)
             ->where('status', 'completed')
             ->whereBetween('payment_date', [$monthStart, $monthEnd])
-            ->sum('amount');
+            ->selectRaw('SUM(amount) as total_amount, SUM(late_fee) as total_late_fees')
+            ->first();
 
         $expectedRent = Lease::where('company_id', $companyId)
             ->where('status', 'active')
             ->sum('rent_amount');
 
-        $lateFees = Payment::where('company_id', $companyId)
-            ->where('status', 'completed')
-            ->whereBetween('payment_date', [$monthStart, $monthEnd])
-            ->sum('late_fee');
+        $collectedThisMonth = $paymentStats->total_amount ?? 0;
+        $lateFees = $paymentStats->total_late_fees ?? 0;
 
         $financial = [
             'collected' => $collectedThisMonth,
@@ -91,10 +106,7 @@ class Dashboard extends Component
         // Maintenance requests needing attention
         $maintenanceAlerts = MaintenanceRequest::where('company_id', $companyId)
             ->whereIn('status', ['new', 'in_progress'])
-            ->where(function ($q) {
-                $q->where('priority', 'emergency')
-                  ->orWhere('priority', 'high');
-            })
+            ->whereIn('priority', ['emergency', 'high'])
             ->with(['property', 'unit'])
             ->latest()
             ->limit(5)
@@ -112,7 +124,7 @@ class Dashboard extends Component
             ->limit(8)
             ->get();
 
-        return view('livewire.dashboard', [
+        return [
             'stats' => $stats,
             'financial' => $financial,
             'paymentsDue' => $paymentsDue,
@@ -122,6 +134,12 @@ class Dashboard extends Component
             'openMaintenance' => $openMaintenance,
             'recentActivity' => $recentActivity,
             'currentMonth' => $currentMonth,
-        ]);
+        ];
+    }
+    
+    // Call this method to refresh dashboard cache when data changes
+    public static function clearCache($companyId)
+    {
+        Cache::forget("dashboard_data_{$companyId}");
     }
 }
