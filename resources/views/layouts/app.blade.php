@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Dashboard' }} - MirvanOps</title>
+    <title>{{ $title ?? 'Dashboard' }} - Mirvan Properties</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap" rel="stylesheet" />
@@ -416,7 +416,7 @@
                         </div>
                         <div>
                             <span class="text-xl font-bold text-primary">Mirvan</span>
-                            <span class="text-xl font-light text-accent">Ops</span>
+                            <span class="text-xl font-light text-accent">Properties</span>
                         </div>
                     </a>
                 </div>
@@ -577,7 +577,7 @@
                     class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                     <span class="text-white font-bold text-sm">M</span>
                 </div>
-                <span class="ml-2 text-lg font-semibold text-primary">MirvanOps</span>
+                <span class="ml-2 text-lg font-semibold text-primary">Mirvan Properties</span>
             </div>
             <button @click="theme = theme === 'dark' ? 'light' : 'dark'" class="theme-toggle p-2 rounded-lg">
                 <svg x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

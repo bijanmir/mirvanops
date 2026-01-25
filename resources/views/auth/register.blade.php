@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create Account - MirvanOps</title>
+    <title>Create Account - Mirvan Properties</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -143,7 +143,7 @@
             </div>
             <div>
                 <span class="text-2xl font-bold text-primary">Mirvan</span>
-                <span class="text-2xl font-light text-accent">Ops</span>
+                <span class="text-2xl font-light text-accent">Properties</span>
             </div>
         </a>
 

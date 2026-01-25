@@ -9,7 +9,7 @@
                         <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                             <span class="text-white font-bold text-lg">M</span>
                         </div>
-                        <span class="text-xl font-bold text-primary hidden sm:block">MirvanOps</span>
+                        <span class="text-xl font-bold text-primary hidden sm:block">Mirvan Properties</span>
                     </a>
                 </div>
 

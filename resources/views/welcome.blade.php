@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MirvanOps - Property Management Made Simple</title>
+    <title>Mirvan Properties - Property Management Made Simple</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -282,7 +282,7 @@
                     </div>
                     <div>
                         <span class="text-xl font-bold text-primary">Mirvan</span>
-                        <span class="text-xl font-light text-accent">Ops</span>
+                        <span class="text-xl font-light text-accent">Properties</span>
                     </div>
                 </a>
 
@@ -352,7 +352,7 @@
                             <div class="w-3 h-3 rounded-full bg-red-500"></div>
                             <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                             <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            <span class="ml-4 text-gray-400 text-sm">MirvanOps Dashboard</span>
+                            <span class="ml-4 text-gray-400 text-sm">Mirvan Properties Dashboard</span>
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                             <div class="bg-white/10 rounded-xl p-4">
@@ -579,7 +579,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="glass-card rounded-3xl p-8 sm:p-12">
                 <h2 class="text-3xl sm:text-4xl font-bold text-primary mb-4">Ready to simplify your property management?</h2>
-                <p class="text-lg text-secondary mb-8">Join hundreds of landlords who are saving time and money with MirvanOps.</p>
+                <p class="text-lg text-secondary mb-8">Join hundreds of landlords who are saving time and money with Mirvan Properties.</p>
                 <a href="{{ route('register') }}" class="btn-primary h-14 px-8 rounded-xl font-semibold text-lg inline-flex items-center justify-center">
                     Get Started for Free
                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
@@ -599,7 +599,7 @@
                         </div>
                         <div>
                             <span class="text-xl font-bold text-primary">Mirvan</span>
-                            <span class="text-xl font-light text-accent">Ops</span>
+                            <span class="text-xl font-light text-accent">Properties</span>
                         </div>
                     </a>
                     <p class="text-secondary text-sm max-w-sm">Property management software designed for landlords who want simplicity without sacrificing power.</p>
@@ -619,7 +619,7 @@
                 </div>
             </div>
             <div class="border-t border-primary mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center">
-                <p class="text-muted text-sm">© {{ date('Y') }} MirvanOps. All rights reserved.</p>
+                <p class="text-muted text-sm">© {{ date('Y') }} Mirvan Properties. All rights reserved.</p>
                 <div class="flex items-center space-x-6 mt-4 sm:mt-0">
                     <a href="#" class="text-muted hover:text-primary text-sm transition-colors">Privacy</a>
                     <a href="#" class="text-muted hover:text-primary text-sm transition-colors">Terms</a>
