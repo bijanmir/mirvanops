@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Company extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
+        'slug',
         'email',
         'phone',
         'address',
@@ -17,47 +20,43 @@ class Company extends Model
         'zip',
     ];
 
-    public function users(): HasMany
+    public function users()
     {
         return $this->hasMany(User::class);
     }
 
-    public function properties(): HasMany
+    public function properties()
     {
         return $this->hasMany(Property::class);
     }
 
-    public function units(): HasMany
+    public function units()
     {
         return $this->hasMany(Unit::class);
     }
 
-    public function tenants(): HasMany
+    public function tenants()
     {
         return $this->hasMany(Tenant::class);
     }
 
-    public function leases(): HasMany
+    public function leases()
     {
         return $this->hasMany(Lease::class);
     }
 
-    public function maintenanceRequests(): HasMany
+    public function payments()
     {
-        return $this->hasMany(MaintenanceRequest::class);
+        return $this->hasMany(Payment::class);
     }
 
-    public function vendors(): HasMany
+    public function vendors()
     {
         return $this->hasMany(Vendor::class);
     }
 
-    public function activityLogs(): HasMany
+    public function maintenanceRequests()
     {
-        return $this->hasMany(ActivityLog::class);
-    }
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(MaintenanceRequest::class);
     }
 }
