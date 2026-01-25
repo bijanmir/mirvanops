@@ -134,6 +134,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/payments', fn() => view('payments.index'))->name('payments.index');
     Route::get('/payments/create', fn() => view('payments.create'))->name('payments.create');
     Route::get('/payments/{id}/edit', fn($id) => view('payments.edit', ['paymentId' => $id]))->name('payments.edit');
+
+    Route::get('/reports', fn() => view('reports.index'))->name('reports.index');
 });
 
 require __DIR__ . '/auth.php';

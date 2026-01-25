@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ $reportTitle }} - {{ $company->name }}</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #333;
+            margin: 30px;
+        }
+        
+        .header {
+            border-bottom: 3px solid #f59e0b;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0 0 5px 0;
+            font-size: 24px;
+            color: #111;
+        }
+        
+        .header h1 span {
+            color: #f59e0b;
+            font-weight: normal;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .header .meta {
+            float: right;
+            text-align: right;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .header .meta strong {
+            color: #333;
+            font-size: 12px;
+        }
+        
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        .summary-row {
+            margin-bottom: 20px;
+        }
+        
+        .summary-box {
+            display: inline-block;
+            width: 23%;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 12px;
+            text-align: center;
+            margin-right: 2%;
+            vertical-align: top;
+        }
+        
+        .summary-box:last-child {
+            margin-right: 0;
+        }
+        
+        .summary-box .label {
+            font-size: 9px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .summary-box .value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #111;
+        }
+        
+        .summary-box .value.green { color: #059669; }
+        .summary-box .value.amber { color: #d97706; }
+        .summary-box .value.red { color: #dc2626; }
+        .summary-box .value.blue { color: #2563eb; }
+        .summary-box .value.purple { color: #7c3aed; }
+        .summary-box .value.accent { color: #f59e0b; }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #111;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f0f0f0;
+            padding: 8px;
+            text-align: left;
+            font-size: 10px;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        th.right { text-align: right; }
+        th.center { text-align: center; }
+        
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 10px;
+        }
+        
+        td.right { text-align: right; }
+        td.center { text-align: center; }
+        td.bold { font-weight: bold; }
+        td.green { color: #059669; }
+        td.amber { color: #d97706; }
+        td.red { color: #dc2626; }
+        
+        tfoot td {
+            background: #f0f0f0;
+            font-weight: bold;
+            border-top: 2px solid #ddd;
+        }
+        
+        .small { font-size: 9px; color: #666; }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+        
+        .badge-green { background: #d1fae5; color: #059669; }
+        .badge-amber { background: #fef3c7; color: #d97706; }
+        .badge-red { background: #fee2e2; color: #dc2626; }
+        
+        .footer {
+            margin-top: 30px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 9px;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header clearfix">
+        <div class="meta">
+            <strong>{{ $company->name }}</strong><br>
+            @if(isset($startDate) && isset($endDate))
+            {{ \Carbon\Carbon::parse($startDate)->format('M d, Y') }} - {{ \Carbon\Carbon::parse($endDate)->format('M d, Y') }}<br>
+            @endif
+            Generated: {{ $generatedAt->format('M d, Y g:i A') }}
+        </div>
+        <h1>Mirvan<span>Ops</span></h1>
+        <p class="subtitle">{{ $reportTitle }}</p>
+    </div>
+    
+    @yield('content')
+    
+    <div class="footer">
+        {{ $company->name }} • {{ $reportTitle }} • Generated by MirvanOps
+    </div>
+</body>
+</html>
