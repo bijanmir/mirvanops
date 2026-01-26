@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Traits\HasDocuments;
 
 class Unit extends Model
 {
+    use HasDocuments;
     protected $fillable = [
         'company_id',
         'property_id',
