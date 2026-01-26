@@ -6,6 +6,7 @@ use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\Validate;
 
 class DocumentManager extends Component
 {
@@ -15,8 +16,12 @@ class DocumentManager extends Component
     public $documentableId;
     public $documents = [];
     
+    #[Validate('required|file|max:10240')]
     public $file;
+    
+    #[Validate('required|string|max:255')]
     public $name = '';
+    
     public $category = '';
     public $notes = '';
     public $showUploadForm = false;
@@ -45,19 +50,31 @@ class DocumentManager extends Component
 
     public function resetForm()
     {
-        $this->file = null;
-        $this->name = '';
-        $this->category = '';
-        $this->notes = '';
+        $this->reset(['file', 'name', 'category', 'notes']);
+        $this->resetValidation();
+    }
+
+    public function updatedFile()
+    {
+        $this->validateOnly('file');
+        
+        // Auto-fill name from filename if empty
+        if (empty($this->name) && $this->file) {
+            $this->name = pathinfo($this->file->getClientOriginalName(), PATHINFO_FILENAME);
+        }
     }
 
     public function upload()
     {
         $this->validate([
-            'file' => 'required|file|max:10240', // 10MB max
+            'file' => 'required|file|max:10240',
             'name' => 'required|string|max:255',
-            'category' => 'nullable|string|max:50',
         ]);
+
+        if (!$this->file) {
+            $this->addError('file', 'Please select a file to upload.');
+            return;
+        }
 
         $originalFilename = $this->file->getClientOriginalName();
         $filename = time() . '_' . $this->file->hashName();
@@ -79,7 +96,8 @@ class DocumentManager extends Component
         ]);
 
         $this->loadDocuments();
-        $this->toggleUploadForm();
+        $this->showUploadForm = false;
+        $this->resetForm();
         
         session()->flash('message', 'Document uploaded successfully.');
     }
