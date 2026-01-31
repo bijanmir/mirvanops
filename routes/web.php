@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\WebhookController;
 
+Route::get('/terms', function () { return view('legal.terms'); })->name('terms');
+Route::get('/privacy', function () { return view('legal.privacy'); })->name('privacy');
+
 Route::get('/', function () {
     return view('welcome');
 });
