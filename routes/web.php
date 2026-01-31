@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BillingController;
+use App\Http\Controllers\WebhookController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,6 +48,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Reports
     Route::get('/reports', fn() => view('reports.index'))->name('reports.index');
+
+    // Billing
+    Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::get('/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
+    Route::get('/billing/success', [BillingController::class, 'success'])->name('billing.success');
+    Route::get('/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
+    Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
+    Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
 });
+
+// Stripe Webhook (no auth, no CSRF)
+Route::post('/webhook/stripe', [WebhookController::class, 'handleStripe'])
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
 require __DIR__ . '/auth.php';
