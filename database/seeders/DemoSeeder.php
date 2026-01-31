@@ -51,7 +51,7 @@ class DemoSeeder extends Seeder
                 'city' => 'San Diego',
                 'state' => 'CA',
                 'zip' => '92109',
-                'type' => 'apartment',
+                'type' => 'residential',
                 'units' => [
                     ['number' => '101', 'beds' => 1, 'baths' => 1, 'sqft' => 650, 'rent' => 1800],
                     ['number' => '102', 'beds' => 1, 'baths' => 1, 'sqft' => 650, 'rent' => 1800],
@@ -67,7 +67,7 @@ class DemoSeeder extends Seeder
                 'city' => 'San Diego',
                 'state' => 'CA',
                 'zip' => '92103',
-                'type' => 'apartment',
+                'type' => 'residential',
                 'units' => [
                     ['number' => 'A1', 'beds' => 1, 'baths' => 1, 'sqft' => 600, 'rent' => 1650],
                     ['number' => 'A2', 'beds' => 1, 'baths' => 1, 'sqft' => 600, 'rent' => 1650],
@@ -81,7 +81,7 @@ class DemoSeeder extends Seeder
                 'city' => 'La Jolla',
                 'state' => 'CA',
                 'zip' => '92037',
-                'type' => 'single_family',
+                'type' => 'residential',
                 'units' => [
                     ['number' => 'Main', 'beds' => 4, 'baths' => 3, 'sqft' => 2400, 'rent' => 4500],
                 ],
@@ -92,7 +92,7 @@ class DemoSeeder extends Seeder
                 'city' => 'San Diego',
                 'state' => 'CA',
                 'zip' => '92101',
-                'type' => 'apartment',
+                'type' => 'mixed',
                 'units' => [
                     ['number' => '1A', 'beds' => 0, 'baths' => 1, 'sqft' => 500, 'rent' => 1400],
                     ['number' => '1B', 'beds' => 1, 'baths' => 1, 'sqft' => 700, 'rent' => 1900],
@@ -120,9 +120,9 @@ class DemoSeeder extends Seeder
                     'company_id' => $company->id,
                     'property_id' => $property->id,
                     'unit_number' => $unitData['number'],
-                    'bedrooms' => $unitData['beds'],
-                    'bathrooms' => $unitData['baths'],
-                    'square_feet' => $unitData['sqft'],
+                    'beds' => $unitData['beds'],
+                    'baths' => $unitData['baths'],
+                    'sqft' => $unitData['sqft'],
                     'market_rent' => $unitData['rent'],
                     'status' => 'vacant',
                 ]);
@@ -152,7 +152,6 @@ class DemoSeeder extends Seeder
                 'last_name' => $data['last_name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'],
-                'status' => 'active',
             ]);
         }
 
@@ -172,10 +171,8 @@ class DemoSeeder extends Seeder
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'rent_amount' => $unit->market_rent,
-                'security_deposit' => $unit->market_rent,
+                'deposit_amount' => $unit->market_rent,
                 'status' => 'active',
-                'pet_deposit' => rand(0, 1) ? 500 : null,
-                'pet_rent' => rand(0, 1) ? 50 : null,
             ]);
 
             $leases[] = $lease;
@@ -202,7 +199,7 @@ class DemoSeeder extends Seeder
                         'payment_date' => $paymentDate,
                         'payment_method' => ['ach', 'check', 'zelle', 'venmo'][rand(0, 3)],
                         'period_covered' => $period,
-                        'late_fee' => $isLate ? 50 : 0,
+                        'late_fee' => $isLate ? 50 : null,
                         'status' => 'completed',
                         'recorded_by' => $user->id,
                     ]);
@@ -228,7 +225,6 @@ class DemoSeeder extends Seeder
                 'specialty' => $data['specialty'],
                 'email' => $data['email'],
                 'phone' => $data['phone'],
-                'status' => 'active',
             ]);
         }
 
@@ -240,19 +236,19 @@ class DemoSeeder extends Seeder
             ['title' => 'Electrical outlet not working', 'category' => 'electrical', 'priority' => 'medium', 'status' => 'assigned', 'cost' => null],
             ['title' => 'Water heater making noise', 'category' => 'plumbing', 'priority' => 'low', 'status' => 'completed', 'cost' => 275],
             ['title' => 'Front door lock is sticky', 'category' => 'general', 'priority' => 'low', 'status' => 'completed', 'cost' => 75],
-            ['title' => 'Smoke detector beeping', 'category' => 'safety', 'priority' => 'emergency', 'status' => 'completed', 'cost' => 25],
+            ['title' => 'Smoke detector beeping', 'category' => 'general', 'priority' => 'high', 'status' => 'completed', 'cost' => 25],
             ['title' => 'Dishwasher leaking', 'category' => 'appliance', 'priority' => 'high', 'status' => 'new', 'cost' => null],
         ];
 
         foreach ($maintenanceData as $index => $data) {
-            $unit = $leaseUnits[$index % count($leaseUnits)];
+            $lease = $leases[$index % count($leases)];
+            $unit = $lease->unit;
             $vendor = $data['status'] !== 'new' ? $vendors[rand(0, count($vendors) - 1)] : null;
 
             $request = MaintenanceRequest::create([
                 'company_id' => $company->id,
-                'property_id' => $unit->property_id,
                 'unit_id' => $unit->id,
-                'tenant_id' => $unit->leases()->where('status', 'active')->first()?->tenant_id,
+                'lease_id' => $lease->id,
                 'title' => $data['title'],
                 'description' => 'Tenant reported: ' . $data['title'] . '. Please address as soon as possible.',
                 'category' => $data['category'],
@@ -268,7 +264,7 @@ class DemoSeeder extends Seeder
                 MaintenanceComment::create([
                     'maintenance_request_id' => $request->id,
                     'user_id' => $user->id,
-                    'comment' => 'Contacted vendor to schedule service.',
+                    'body' => 'Contacted vendor to schedule service.',
                     'created_at' => $request->created_at->addHours(2),
                 ]);
             }
@@ -277,7 +273,7 @@ class DemoSeeder extends Seeder
                 MaintenanceComment::create([
                     'maintenance_request_id' => $request->id,
                     'user_id' => $user->id,
-                    'comment' => 'Issue has been resolved. Tenant confirmed.',
+                    'body' => 'Issue has been resolved. Tenant confirmed.',
                     'created_at' => $request->created_at->addDays(2),
                 ]);
             }
@@ -299,7 +295,6 @@ class DemoSeeder extends Seeder
                 'action' => $activity['action'],
                 'model_type' => $activity['model_type'],
                 'model_id' => 1,
-                'description' => $activity['description'],
                 'created_at' => now()->subDays(5 - $index),
             ]);
         }
