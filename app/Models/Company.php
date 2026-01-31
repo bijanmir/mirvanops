@@ -25,11 +25,13 @@ class Company extends Model
         'subscription_status',
         'trial_ends_at',
         'subscription_ends_at',
+        'grace_period_ends_at',
     ];
 
     protected $casts = [
         'trial_ends_at' => 'datetime',
         'subscription_ends_at' => 'datetime',
+        'grace_period_ends_at' => 'datetime',
     ];
 
     // Relationships
@@ -101,7 +103,31 @@ class Company extends Model
 
     public function hasActiveSubscription(): bool
     {
-        return in_array($this->subscription_status, ['active', 'trialing']);
+        // Active if subscription is active/trialing, OR within grace period
+        if (in_array($this->subscription_status, ['active', 'trialing'])) {
+            return true;
+        }
+
+        // Past due but within grace period
+        if ($this->subscription_status === 'past_due' && $this->isInGracePeriod()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isInGracePeriod(): bool
+    {
+        return $this->grace_period_ends_at && $this->grace_period_ends_at->isFuture();
+    }
+
+    public function gracePeriodDaysRemaining(): int
+    {
+        if (!$this->grace_period_ends_at) {
+            return 0;
+        }
+
+        return max(0, now()->diffInDays($this->grace_period_ends_at, false));
     }
 
     public function onFreePlan(): bool

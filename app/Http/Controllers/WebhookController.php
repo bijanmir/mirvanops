@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\User;
+use App\Notifications\PaymentFailedNotification;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Webhook;
+use Carbon\Carbon;
 
 class WebhookController extends Controller
 {
@@ -17,7 +20,6 @@ class WebhookController extends Controller
         $signature = $request->header('Stripe-Signature');
         $webhookSecret = config('stripe.webhook_secret');
 
-        // Skip signature verification in test mode if no webhook secret
         if ($webhookSecret) {
             try {
                 $event = Webhook::constructEvent($payload, $signature, $webhookSecret);
@@ -41,6 +43,10 @@ class WebhookController extends Controller
             case 'invoice.payment_failed':
                 $this->handlePaymentFailed($event->data->object);
                 break;
+
+            case 'invoice.payment_succeeded':
+                $this->handlePaymentSucceeded($event->data->object);
+                break;
         }
 
         return response('OK', 200);
@@ -54,7 +60,6 @@ class WebhookController extends Controller
             $priceId = $subscription->items->data[0]->price->id ?? null;
             $plan = $this->getPlanFromPriceId($priceId);
 
-            // Determine status
             $status = $subscription->status;
             if ($subscription->cancel_at_period_end) {
                 $status = 'canceling';
@@ -81,6 +86,7 @@ class WebhookController extends Controller
                 'subscription_status' => 'cancelled',
                 'subscription_id' => null,
                 'subscription_ends_at' => null,
+                'grace_period_ends_at' => null,
             ]);
         }
     }
@@ -90,9 +96,42 @@ class WebhookController extends Controller
         $company = Company::where('stripe_id', $invoice->customer)->first();
 
         if ($company) {
+            // Set 7-day grace period from now
+            $gracePeriodEnd = now()->addDays(7);
+            
             $company->update([
                 'subscription_status' => 'past_due',
+                'grace_period_ends_at' => $gracePeriodEnd,
             ]);
+
+            // Send email notification to all company users
+            $this->notifyPaymentFailed($company, $gracePeriodEnd);
+        }
+    }
+
+    protected function handlePaymentSucceeded($invoice)
+    {
+        $company = Company::where('stripe_id', $invoice->customer)->first();
+
+        if ($company && $company->subscription_status === 'past_due') {
+            // Payment recovered - clear grace period
+            $company->update([
+                'subscription_status' => 'active',
+                'grace_period_ends_at' => null,
+            ]);
+        }
+    }
+
+    protected function notifyPaymentFailed(Company $company, Carbon $gracePeriodEnd)
+    {
+        // Notify all users in the company
+        foreach ($company->users as $user) {
+            try {
+                $user->notify(new PaymentFailedNotification($gracePeriodEnd));
+            } catch (\Exception $e) {
+                // Log but don't fail
+                \Log::error('Failed to send payment failed notification: ' . $e->getMessage());
+            }
         }
     }
 
