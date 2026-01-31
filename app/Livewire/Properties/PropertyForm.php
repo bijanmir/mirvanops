@@ -20,6 +20,15 @@ class PropertyForm extends Component
 
     public function mount($propertyId = null)
     {
+        // Block creating new properties when over limit
+        if (!$propertyId) {
+            $company = auth()->user()->company;
+            if ($company->isOverLimit()) {
+                session()->flash('error', 'You have exceeded your unit limit. Please upgrade your plan to add new properties.');
+                return redirect()->route('billing.index');
+            }
+        }
+
         if ($propertyId) {
             $this->property = Property::where('company_id', auth()->user()->company_id)
                 ->findOrFail($propertyId);
@@ -41,6 +50,15 @@ class PropertyForm extends Component
 
     public function save()
     {
+        // Double-check limit on save for new properties
+        if (!$this->property) {
+            $company = auth()->user()->company;
+            if ($company->isOverLimit()) {
+                session()->flash('error', 'You have exceeded your unit limit. Please upgrade your plan.');
+                return redirect()->route('billing.index');
+            }
+        }
+
         $validated = $this->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',

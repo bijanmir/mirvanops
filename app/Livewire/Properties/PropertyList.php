@@ -14,6 +14,8 @@ class PropertyList extends Component
     public $typeFilter = '';
     public $showDeleteModal = false;
     public $propertyToDelete = null;
+    public $propertyToDeleteName = '';
+    public $propertyToDeleteUnitCount = 0;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -32,20 +34,37 @@ class PropertyList extends Component
 
     public function confirmDelete($propertyId)
     {
+        $property = Property::where('company_id', auth()->user()->company_id)
+            ->withCount('units')
+            ->findOrFail($propertyId);
+
         $this->propertyToDelete = $propertyId;
+        $this->propertyToDeleteName = $property->name;
+        $this->propertyToDeleteUnitCount = $property->units_count;
         $this->showDeleteModal = true;
     }
 
     public function deleteProperty()
     {
         $property = Property::where('company_id', auth()->user()->company_id)
+            ->withCount('units')
             ->findOrFail($this->propertyToDelete);
-        
+
+        // Block deletion if property has units
+        if ($property->units_count > 0) {
+            session()->flash('error', 'Cannot delete property with units. Please delete all units first.');
+            $this->showDeleteModal = false;
+            $this->propertyToDelete = null;
+            return;
+        }
+
         $property->delete();
-        
+
         $this->showDeleteModal = false;
         $this->propertyToDelete = null;
-        
+        $this->propertyToDeleteName = '';
+        $this->propertyToDeleteUnitCount = 0;
+
         session()->flash('success', 'Property deleted successfully.');
     }
 
@@ -53,6 +72,8 @@ class PropertyList extends Component
     {
         $this->showDeleteModal = false;
         $this->propertyToDelete = null;
+        $this->propertyToDeleteName = '';
+        $this->propertyToDeleteUnitCount = 0;
     }
 
     public function render()

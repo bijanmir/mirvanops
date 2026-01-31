@@ -17,6 +17,8 @@ class TenantList extends Component
     public $propertyFilter = '';
     public $showDeleteModal = false;
     public $tenantToDelete = null;
+    public $tenantToDeleteName = '';
+    public $tenantToDeleteHasActiveLease = false;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -31,20 +33,41 @@ class TenantList extends Component
 
     public function confirmDelete($tenantId)
     {
+        $tenant = Tenant::where('company_id', auth()->user()->company_id)
+            ->withCount(['leases' => function ($query) {
+                $query->whereIn('status', ['active', 'pending']);
+            }])
+            ->findOrFail($tenantId);
+
         $this->tenantToDelete = $tenantId;
+        $this->tenantToDeleteName = $tenant->first_name . ' ' . $tenant->last_name;
+        $this->tenantToDeleteHasActiveLease = $tenant->leases_count > 0;
         $this->showDeleteModal = true;
     }
 
     public function deleteTenant()
     {
         $tenant = Tenant::where('company_id', auth()->user()->company_id)
+            ->withCount(['leases' => function ($query) {
+                $query->whereIn('status', ['active', 'pending']);
+            }])
             ->findOrFail($this->tenantToDelete);
-        
+
+        // Block deletion if tenant has active leases
+        if ($tenant->leases_count > 0) {
+            session()->flash('error', 'Cannot delete tenant with active leases. Please terminate the leases first.');
+            $this->showDeleteModal = false;
+            $this->tenantToDelete = null;
+            return;
+        }
+
         ActivityLog::log('deleted', $tenant);
         $tenant->delete();
 
         $this->showDeleteModal = false;
         $this->tenantToDelete = null;
+        $this->tenantToDeleteName = '';
+        $this->tenantToDeleteHasActiveLease = false;
 
         session()->flash('success', 'Tenant deleted successfully.');
     }
@@ -53,6 +76,8 @@ class TenantList extends Component
     {
         $this->showDeleteModal = false;
         $this->tenantToDelete = null;
+        $this->tenantToDeleteName = '';
+        $this->tenantToDeleteHasActiveLease = false;
     }
 
     public function render()

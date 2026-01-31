@@ -46,6 +46,15 @@ class LeaseForm extends Component
         $this->units = collect([]);
         $this->tenantExistingLeases = collect([]);
         
+        // Block creating new leases when over limit
+        if (!$leaseId) {
+            $company = auth()->user()->company;
+            if ($company->isOverLimit()) {
+                session()->flash('error', 'You have exceeded your unit limit. Please upgrade your plan to create new leases.');
+                return redirect()->route('billing.index');
+            }
+        }
+        
         if ($leaseId) {
             // Editing existing lease
             $this->lease = Lease::where('company_id', auth()->user()->company_id)
@@ -210,6 +219,15 @@ class LeaseForm extends Component
 
     public function save()
     {
+        // Double-check limit on save for new leases
+        if (!$this->lease) {
+            $company = auth()->user()->company;
+            if ($company->isOverLimit()) {
+                session()->flash('error', 'You have exceeded your unit limit. Please upgrade your plan.');
+                return redirect()->route('billing.index');
+            }
+        }
+
         $this->validate([
             'property_id' => 'required|exists:properties,id',
             'unit_id' => 'required|exists:units,id',

@@ -731,6 +731,8 @@
                     </div>
                 @endif
 
+                @include('partials.over-limit-banner')
+
                 {{ $slot }}
             </div>
         </main>
