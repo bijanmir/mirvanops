@@ -515,20 +515,6 @@
                     </a>
                 </nav>
 
-                    <p class="px-4 text-xs font-semibold text-subtle uppercase tracking-wider mb-4 mt-8">Account</p>
-
-                    <a href="{{ route('billing.index') }}"
-                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('billing.*') ? 'active' : '' }}">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                        </svg>
-                        Billing
-                        @if(auth()->user()->company->onFreePlan())
-                            <span class="ml-auto badge-info text-xs font-semibold px-2 py-0.5 rounded-full">Free</span>
-                        @endif
-                    </a>
-
                 <!-- User Menu & Theme Toggle -->
                 <div class="border-t border-primary p-4 space-y-3">
                     <!-- Theme Toggle -->

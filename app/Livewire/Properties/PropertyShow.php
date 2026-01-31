@@ -35,6 +35,15 @@ class PropertyShow extends Component
 
     public function openUnitModal($unitId = null)
     {
+        // Check unit limit when adding new unit
+        if (!$unitId) {
+            $company = auth()->user()->company;
+            if (!$company->canAddUnits()) {
+                session()->flash('error', 'You have reached your unit limit (' . $company->getUnitLimit() . ' units). Please upgrade your plan to add more units.');
+                return redirect()->route('billing.index');
+            }
+        }
+
         if ($unitId) {
             $unit = Unit::with('currentLease')->findOrFail($unitId);
             $this->editingUnit = $unit;
@@ -73,6 +82,16 @@ class PropertyShow extends Component
 
     public function saveUnit()
     {
+        // Check unit limit again before saving (in case of race condition)
+        if (!$this->editingUnit) {
+            $company = auth()->user()->company;
+            if (!$company->canAddUnits()) {
+                session()->flash('error', 'You have reached your unit limit. Please upgrade your plan to add more units.');
+                $this->closeUnitModal();
+                return;
+            }
+        }
+
         $this->validate([
             'unit_number' => 'required|string|max:50',
             'bedrooms' => 'required|integer|min:0',
@@ -155,6 +174,7 @@ class PropertyShow extends Component
 
     public function render()
     {
+        $company = auth()->user()->company;
         $units = $this->property->units()
             ->with(['currentLease.tenant'])
             ->when($this->statusFilter, function ($query) {
@@ -173,6 +193,9 @@ class PropertyShow extends Component
         return view('livewire.properties.property-show', [
             'units' => $units,
             'stats' => $stats,
+            'unitLimit' => $company->getUnitLimit(),
+            'totalUnits' => $company->units()->count(),
+            'canAddUnits' => $company->canAddUnits(),
         ]);
     }
 }
