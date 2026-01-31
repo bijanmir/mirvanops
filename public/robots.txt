@@ -1,2 +1,13 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /dashboard
+Disallow: /properties
+Disallow: /tenants
+Disallow: /leases
+Disallow: /payments
+Disallow: /maintenance
+Disallow: /vendors
+Disallow: /billing
+Disallow: /reports
+
+Sitemap: https://mirvan.app/sitemap.xml
