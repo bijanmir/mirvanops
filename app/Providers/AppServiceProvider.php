@@ -2,14 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use App\Observers\CacheObserver;
-use App\Models\Payment;
-use App\Models\Lease;
-use App\Models\Tenant;
-use App\Models\Property;
-use App\Models\Unit;
-use App\Models\MaintenanceRequest;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,18 +14,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Clear dashboard cache when these models change
-        $models = [
-            Payment::class,
-            Lease::class,
-            Tenant::class,
-            Property::class,
-            Unit::class,
-            MaintenanceRequest::class,
-        ];
-
-        foreach ($models as $model) {
-            $model::observe(CacheObserver::class);
-        }
+        // Register policies
+        Gate::policy(\App\Models\Property::class, \App\Policies\PropertyPolicy::class);
+        Gate::policy(\App\Models\Unit::class, \App\Policies\UnitPolicy::class);
+        Gate::policy(\App\Models\Tenant::class, \App\Policies\TenantPolicy::class);
+        Gate::policy(\App\Models\Lease::class, \App\Policies\LeasePolicy::class);
+        Gate::policy(\App\Models\Payment::class, \App\Policies\PaymentPolicy::class);
+        Gate::policy(\App\Models\MaintenanceRequest::class, \App\Policies\MaintenanceRequestPolicy::class);
+        Gate::policy(\App\Models\Vendor::class, \App\Policies\VendorPolicy::class);
     }
 }

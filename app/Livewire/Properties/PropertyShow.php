@@ -6,9 +6,12 @@ use Livewire\Component;
 use App\Models\Property;
 use App\Models\Unit;
 use App\Models\ActivityLog;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PropertyShow extends Component
 {
+    use AuthorizesRequests;
+
     public Property $property;
     
     public $showUnitModal = false;
@@ -29,8 +32,8 @@ class PropertyShow extends Component
 
     public function mount($propertyId)
     {
-        $this->property = Property::where('company_id', auth()->user()->company_id)
-            ->findOrFail($propertyId);
+        $this->property = Property::findOrFail($propertyId);
+        $this->authorize('view', $this->property);
     }
 
     public function openUnitModal($unitId = null)
@@ -46,6 +49,8 @@ class PropertyShow extends Component
 
         if ($unitId) {
             $unit = Unit::with('currentLease')->findOrFail($unitId);
+            $this->authorize('update', $unit);
+            
             $this->editingUnit = $unit;
             $this->unit_number = $unit->unit_number;
             $this->floor = $unit->floor ?? '';
@@ -114,6 +119,8 @@ class PropertyShow extends Component
         ];
 
         if ($this->editingUnit) {
+            $this->authorize('update', $this->editingUnit);
+            
             // Don't change status if there's an active lease
             if (!$this->editingUnit->currentLease) {
                 $data['status'] = $this->status;
@@ -136,6 +143,7 @@ class PropertyShow extends Component
     public function confirmDeleteUnit($unitId)
     {
         $unit = Unit::with('currentLease')->findOrFail($unitId);
+        $this->authorize('delete', $unit);
         
         if ($unit->currentLease) {
             session()->flash('error', 'Cannot delete unit with an active lease. Terminate the lease first.');
@@ -149,6 +157,7 @@ class PropertyShow extends Component
     public function deleteUnit()
     {
         $unit = Unit::with('currentLease')->findOrFail($this->unitToDelete);
+        $this->authorize('delete', $unit);
         
         if ($unit->currentLease) {
             session()->flash('error', 'Cannot delete unit with an active lease.');
