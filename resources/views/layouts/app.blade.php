@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Dashboard' }} - Mirvan Properties</title>
+    <title>{{ $title ?? 'Dashboard' }} - Mirvan</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap" rel="stylesheet" />
@@ -414,10 +414,7 @@
                             class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg group-hover:shadow-amber-500/30 transition-shadow">
                             <span class="text-white font-bold text-lg">M</span>
                         </div>
-                        <div>
-                            <span class="text-xl font-bold text-primary">Mirvan</span>
-                            <span class="text-xl font-light text-accent">Properties</span>
-                        </div>
+                        <span class="text-xl font-bold text-primary">Mirvan</span>
                     </a>
                 </div>
 
@@ -513,7 +510,6 @@
                         </svg>
                         Reports
                     </a>
-                </nav>
 
                     <p class="px-4 text-xs font-semibold text-subtle uppercase tracking-wider mb-4 mt-8">Account</p>
 
@@ -528,6 +524,7 @@
                             <span class="ml-auto badge-info text-xs font-semibold px-2 py-0.5 rounded-full">Free</span>
                         @endif
                     </a>
+                </nav>
 
                 <!-- User Menu & Theme Toggle -->
                 <div class="border-t border-primary p-4 space-y-3">
@@ -579,7 +576,7 @@
         <!-- Mobile Header -->
         <div
             class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card backdrop-blur-xl border-b border-primary z-20 flex items-center justify-between px-4">
-            <button onclick="document.getElementById('mobile-menu').classList.remove('translate-x-full')"
+            <button onclick="openMobileMenu()"
                 class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -591,7 +588,7 @@
                     class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                     <span class="text-white font-bold text-sm">M</span>
                 </div>
-                <span class="ml-2 text-lg font-semibold text-primary">Mirvan Properties</span>
+                <span class="ml-2 text-lg font-semibold text-primary">Mirvan</span>
             </div>
             <button @click="theme = theme === 'dark' ? 'light' : 'dark'" class="theme-toggle p-2 rounded-lg">
                 <svg x-show="theme === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -606,13 +603,13 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="lg:hidden fixed inset-0 z-50 translate-x-full transition-transform duration-300">
-            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                onclick="document.getElementById('mobile-menu').classList.add('translate-x-full')"></div>
-            <div class="absolute right-0 top-0 bottom-0 w-72 bg-card border-l border-primary">
+        <div id="mobile-menu" class="lg:hidden fixed inset-0 z-50 pointer-events-none invisible">
+            <div id="mobile-menu-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-auto"
+                onclick="closeMobileMenu()"></div>
+            <div id="mobile-menu-panel" class="absolute right-0 top-0 bottom-0 w-72 bg-card border-l border-primary translate-x-full transition-transform duration-300 pointer-events-auto">
                 <div class="h-16 flex items-center justify-between px-6 border-b border-primary">
                     <span class="text-lg font-semibold text-primary">Menu</span>
-                    <button onclick="document.getElementById('mobile-menu').classList.add('translate-x-full')"
+                    <button onclick="closeMobileMenu()"
                         class="p-2 rounded-xl text-muted hover:text-primary hover:bg-input">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -670,6 +667,22 @@
                                 d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         Vendors
+                    </a>
+                    <a href="{{ route('reports.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Reports
+                    </a>
+                    <a href="{{ route('billing.index') }}"
+                        class="sidebar-link flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('billing.*') ? 'active' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                        Billing
                     </a>
                 </nav>
 
@@ -737,6 +750,23 @@
             </div>
         </main>
     </div>
+
+    <script>
+    function openMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.remove('pointer-events-none', 'invisible');
+        document.getElementById('mobile-menu-overlay').classList.remove('opacity-0');
+        document.getElementById('mobile-menu-panel').classList.remove('translate-x-full');
+    }
+    function closeMobileMenu() {
+        document.getElementById('mobile-menu-overlay').classList.add('opacity-0');
+        document.getElementById('mobile-menu-panel').classList.add('translate-x-full');
+        setTimeout(() => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.add('pointer-events-none', 'invisible');
+        }, 300);
+    }
+    </script>
 
     @livewireScripts
 </body>
